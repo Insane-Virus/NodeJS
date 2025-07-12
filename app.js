@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 app.use(cors({
-    origin: '*',
+    origin: ['http://localhost:4200','https://angular-testing-kzso.onrender.com/'],
     credentials:true,
 }));
 //connecting mongoose
