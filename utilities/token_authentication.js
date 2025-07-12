@@ -1,5 +1,5 @@
 const JWT = require('../utilities/jwt');
-//const redisCache = require('./redis_cache');
+const redisCache = require('./redis_cache');
 const userDB = require('../models/user_model');
 
 const authenticate = async (req, res, next) => {
@@ -10,19 +10,19 @@ const authenticate = async (req, res, next) => {
     }
     try {
         const decoded = JWT.verify(authHeader.split(' ')[1]);
-        // const curUser = await redisCache.get(`${decoded.userId}`);
-        // if (!curUser) {
+        const curUser = await redisCache.get(`${decoded.userId}`);
+        if (!curUser) {
             let dbUser = await userDB.findById(decoded.userId);
             if (!dbUser) {
                 res.status(403).json({ error: 'No user found with that token' });
             }
-            //await redisCache.set(`${decoded.userId}`,dbUser);
+            await redisCache.set(`${decoded.userId}`,dbUser);
             //console.log("new redis entry");
             req.currentUser = dbUser;
-        // }else{
-        //     await redisCache.expire(`${decoded.userId}`);
-        //     req.currentUser = curUser;
-        // }
+        }else{
+            await redisCache.expire(`${decoded.userId}`);
+            req.currentUser = curUser;
+        }
         //console.log(req.currentUser);
         next();
     } catch (error) {

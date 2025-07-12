@@ -8,7 +8,14 @@ app.use(cors({
 }));
 //connecting mongoose
 const mongoose = require('mongoose');
-mongoose.connect(process.env.DB_URL);
+mongoose.connect(process.env.DB_URL,{
+    useNewUrlParser:true,
+    useUnifiedTopology:true
+}).then(()=>{
+    console.log("mongoDB connected");
+}).catch(err=>{
+    console.log("MongoDB error : ",err);
+});
 
 app.use(express.json());
 
