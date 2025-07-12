@@ -1,5 +1,5 @@
 const userDB = require('../models/user_model');
-const redisCache = require('../utilities/redis_cache');
+//const redisCache = require('../utilities/redis_cache');
 const bcrypt = require('bcryptjs');
 const JWT = require('../utilities/jwt');
 const { joiUserSchemaLogin, joiUserSchemaRegister } = require('../utilities/joi_user_schema');
@@ -47,7 +47,7 @@ const register = async (req, res, next) => {
         value.password = hashPassword;
         const user = await new userDB(value).save();
         await exchangeBalance(req.currentUser._id, user.units, false);
-        await redisCache.delete(req.currentUser._id.toString());
+        //await redisCache.delete(req.currentUser._id.toString());
         SuccessCreated(res, `New ${(req.currentUser.role == 'admin') ? 'agent' : 'user'} Created`, {id:user._id});
     } catch (error) {
         console.log(error);
@@ -91,7 +91,7 @@ const fund = async (req, res, next) => {
     }
     try {
         await exchangeBalance(req.currentUser._id, req.body.units, false);
-        await redisCache.delete(req.currentUser._id.toString());
+        //await redisCache.delete(req.currentUser._id.toString());
         await exchangeBalance(req.body.id, req.body.units, true);
         SuccessCreated(res, `Funded ${(req.currentUser.role == 'admin') ? 'agent' : 'user'}`, {});
     } catch (error) {
